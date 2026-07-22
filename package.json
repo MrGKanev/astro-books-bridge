@@ -1,0 +1,42 @@
+{
+  "name": "astro-goodreads-bridge",
+  "version": "0.1.0",
+  "description": "Use a Goodreads RSS feed as a typed, locally enriched Astro book catalog.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "astro",
+    "goodreads",
+    "rss",
+    "books"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "astro": ">=4.0.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.2.5",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "astro": "^7.1.3",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
+  }
+}

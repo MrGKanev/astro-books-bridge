@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Goodreads shelf</title>
+    <item>
+      <title>The Left Hand of Darkness</title>
+      <link>https://www.goodreads.com/review/show/12345</link>
+      <book_id>18423</book_id>
+      <isbn>0441478123</isbn>
+      <isbn13>9780441478125</isbn13>
+      <author_name>Ursula K. Le Guin</author_name>
+      <book_image_url>https://images.example/left-hand.jpg</book_image_url>
+      <average_rating>4.11</average_rating>
+      <user_rating>5</user_rating>
+      <user_read_at>Mon Jan 01 00:00:00 -0800 2024</user_read_at>
+    </item>
+  </channel>
+</rss>
