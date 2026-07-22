@@ -2,17 +2,17 @@ import type { AstroIntegration } from 'astro';
 import type { Plugin, ViteDevServer } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { buildCatalog, resolveOptions, type GoodreadsBridgeOptions, type ResolvedGoodreadsBridgeOptions } from './catalog.js';
+import { buildCatalog, resolveOptions, type BookBridgeOptions, type ResolvedBookBridgeOptions } from './catalog.js';
 
-export type { Book, BookCatalog, BookOverride, GoodreadsBook } from './schema.js';
-export type { GoodreadsBridgeOptions } from './catalog.js';
+export type { Book, BookCatalog, BookOverride, BookSourceName, GoodreadsBook } from './schema.js';
+export type { BookBridgeOptions, GoogleBooksSourceOptions, GoodreadsBridgeOptions, MetadataSourceOptions } from './catalog.js';
 export { buildCatalog } from './catalog.js';
 export { parseGoodreadsRss } from './rss.js';
 
-export const virtualModuleId = 'astro-goodreads-bridge:catalog';
+export const virtualModuleId = 'astro-book-bridge:catalog';
 const resolvedVirtualModuleId = `\0${virtualModuleId}`;
 
-function virtualModule(options: ResolvedGoodreadsBridgeOptions, logger: { warn(message: string): void }): Plugin {
+function virtualModule(options: ResolvedBookBridgeOptions, logger: { warn(message: string): void }): Plugin {
   let server: ViteDevServer | undefined;
   let catalog: Promise<unknown> | undefined;
 
@@ -24,7 +24,7 @@ function virtualModule(options: ResolvedGoodreadsBridgeOptions, logger: { warn(m
   };
 
   return {
-    name: 'astro-goodreads-bridge',
+    name: 'astro-book-bridge',
     resolveId(id) {
       return id === virtualModuleId ? resolvedVirtualModuleId : undefined;
     },
@@ -45,12 +45,12 @@ function virtualModule(options: ResolvedGoodreadsBridgeOptions, logger: { warn(m
 }
 
 /**
- * Astro integration exposing Goodreads RSS books through
- * `astro-goodreads-bridge:catalog`.
+ * Astro integration exposing a multi-source book catalog through
+ * `astro-book-bridge:catalog`.
  */
-export default function goodreadsBridge(options: GoodreadsBridgeOptions): AstroIntegration {
+export default function bookBridge(options: BookBridgeOptions): AstroIntegration {
   return {
-    name: 'astro-goodreads-bridge',
+    name: 'astro-book-bridge',
     hooks: {
       'astro:config:setup': ({ config, logger, updateConfig }) => {
         const root = fileURLToPath(config.root);
@@ -63,9 +63,9 @@ export default function goodreadsBridge(options: GoodreadsBridgeOptions): AstroI
       },
       'astro:config:done': ({ injectTypes }) => {
         injectTypes({
-          filename: 'astro-goodreads-bridge.d.ts',
+          filename: 'astro-book-bridge.d.ts',
           content: `declare module '${virtualModuleId}' {
-  import type { Book, BookCatalog } from 'astro-goodreads-bridge';
+  import type { Book, BookCatalog } from 'astro-book-bridge';
   export const catalog: BookCatalog;
   export const books: Book[];
   export default books;

@@ -1,7 +1,7 @@
 {
-  "name": "astro-goodreads-bridge",
+  "name": "astro-book-bridge",
   "version": "0.1.0",
-  "description": "Use a Goodreads RSS feed as a typed, locally enriched Astro book catalog.",
+  "description": "Build a typed, locally enriched Astro book catalog from Goodreads RSS, Open Library and Google Books.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

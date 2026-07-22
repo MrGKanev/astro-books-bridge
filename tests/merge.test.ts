@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mergeBooks } from '../src/merge.js';
+import { combineSourceBooks, mergeBooks } from '../src/merge.js';
 
 const source = [{
   title: 'Example',
@@ -27,5 +27,17 @@ describe('mergeBooks', () => {
       { goodreadsId: '42', note: 'A' },
       { goodreadsId: '42', note: 'B' },
     ])).toThrow('Duplicate goodreadsId');
+  });
+
+  it('combines provider metadata without replacing first-source fields', () => {
+    const books = combineSourceBooks([
+      { source: 'goodreads-rss', title: 'Personal title', isbn13: '9780123456789' },
+      { source: 'open-library', title: 'Catalog title', isbn13: '9780123456789', pageCount: 320 },
+    ]);
+    expect(books).toEqual([expect.objectContaining({
+      title: 'Personal title',
+      pageCount: 320,
+      sources: ['goodreads-rss', 'open-library'],
+    })]);
   });
 });

@@ -38,7 +38,7 @@ describe('Astro integration', () => {
     const done = integration.hooks['astro:config:done']!;
     await done({ injectTypes: (type: { filename: string; content: string }) => { injected.push(type); return pathToFileURL(`${root}/types.d.ts`); } } as any);
     expect(injected[0]).toMatchObject({
-      filename: 'astro-goodreads-bridge.d.ts',
+      filename: 'astro-book-bridge.d.ts',
       content: expect.stringContaining(`declare module '${virtualModuleId}'`),
     });
   });

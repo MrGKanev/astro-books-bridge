@@ -29,4 +29,21 @@ describe('buildCatalog', () => {
     expect(catalog.books[0]).toMatchObject({ title: 'Book', note: 'Local note' });
     expect(JSON.parse(await readFile(join(root, '.cache/rss.json'), 'utf8'))).toHaveProperty('xml');
   });
+
+  it('can build a catalog from Open Library without Goodreads', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'goodreads-bridge-'));
+    roots.push(root);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      'ISBN:9780123456789': { title: 'Library only', identifiers: { isbn_13: ['9780123456789'] } },
+    }))));
+
+    const catalog = await buildCatalog(resolveOptions({
+      openLibrary: { isbns: ['9780123456789'], enrich: false },
+    }, root));
+
+    expect(catalog).toMatchObject({
+      books: [expect.objectContaining({ title: 'Library only', source: 'open-library' })],
+      source: { providers: ['open-library'] },
+    });
+  });
 });

@@ -25,7 +25,11 @@ export const bookOverridesSchema = z.object({
 export type BookOverride = z.infer<typeof bookOverrideSchema>;
 export type BookOverrides = z.infer<typeof bookOverridesSchema>;
 
+export type BookSourceName = 'goodreads-rss' | 'open-library' | 'google-books';
+
 export interface GoodreadsBook {
+  source?: BookSourceName;
+  sources?: BookSourceName[];
   goodreadsId?: string;
   isbn?: string;
   isbn13?: string;
@@ -38,18 +42,28 @@ export interface GoodreadsBook {
   userRating?: number;
   readAt?: string;
   addedAt?: string;
+  publisher?: string;
+  publishedDate?: string;
+  pageCount?: number;
+  subjects?: string[];
+  language?: string;
+  previewLink?: string;
 }
 
 export type Book = GoodreadsBook &
   Omit<BookOverride, 'goodreadsId' | 'isbn' | 'isbn13'> & {
-    source: 'goodreads-rss';
+    /** First configured source that supplied this book. */
+    source: BookSourceName;
+    /** Every configured source successfully merged into this book. */
+    sources: BookSourceName[];
   };
 
 export interface BookCatalog {
   books: Book[];
   generatedAt: string;
   source: {
-    rssUrl: string;
+    rssUrl?: string;
     usedCache: boolean;
+    providers: BookSourceName[];
   };
 }

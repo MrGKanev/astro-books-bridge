@@ -45,6 +45,7 @@ export function parseGoodreadsRss(xml: string): GoodreadsBook[] {
 
     const link = text(item.link);
     return [{
+      source: 'goodreads-rss',
       title,
       goodreadsId: text(item.book_id) ?? idFromLink(text(item.guid)) ?? idFromLink(link),
       isbn: text(item.isbn),
