@@ -1,0 +1,22 @@
+:root { color: #e8eefb; background: #061121; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+img { display: block; max-width: 100%; }
+.dark-shelf-sections { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: clamp(44px, 8vw, 108px) 0; }
+.dark-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 34px; }
+.dark-heading p, .dark-state { margin: 0 0 8px; color: #75a9ff; font-size: .74rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.dark-heading h1 { margin: 0; font-size: clamp(2.6rem, 6vw, 5.4rem); letter-spacing: -.065em; line-height: .88; }
+.dark-heading > span { color: #9eacc2; font-size: .9rem; }
+.dark-shelf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+.dark-shelf-grid article { min-width: 0; }
+.dark-shelf-grid img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border: 1px solid #203457; border-radius: 5px; }
+.dark-shelf-grid h2 { margin: 10px 0 4px; font-size: .92rem; letter-spacing: -.02em; line-height: 1.2; }
+.dark-shelf-grid p { margin: 0; color: #9eacc2; font-size: .78rem; }
+.dark-book-note { display: grid; grid-template-columns: 132px 1fr; gap: 26px; margin-top: 68px; padding: clamp(22px, 4vw, 42px); border: 1px solid #203457; background: #0b1a30; }
+.dark-book-note > img { width: 132px; aspect-ratio: 2 / 3; object-fit: cover; }
+.dark-book-note h2 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 3.5rem); letter-spacing: -.055em; line-height: .94; }
+.dark-author { margin: 0 0 22px; color: #9eacc2; }
+.dark-description { max-width: 54ch; margin: 0; color: #d1d9e8; line-height: 1.62; }
+.dark-tags { margin: 24px 0 0; color: #75a9ff; font-size: .8rem; font-weight: 700; }
+@media (min-width: 700px) { .dark-shelf-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .dark-shelf-sections { width: min(100% - 32px, 1280px); } .dark-book-note { grid-template-columns: 92px 1fr; gap: 18px; } .dark-book-note > img { width: 92px; } }

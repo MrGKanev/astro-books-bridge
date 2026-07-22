@@ -53,6 +53,8 @@ export function parseGoodreadsRss(xml: string): GoodreadsBook[] {
       author: text(item.author_name) ?? text(item['dc:creator']),
       link,
       imageUrl: text(item.book_image_url) ?? text(item.image_url),
+      coverSourceUrl: text(item.book_image_url) ?? text(item.image_url),
+      coverProvider: text(item.book_image_url) ?? text(item.image_url) ? 'goodreads-rss' : undefined,
       description: text(item.book_description) ?? text(item.description),
       averageRating: number(item.average_rating),
       userRating: number(item.user_rating),

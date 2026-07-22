@@ -5,9 +5,10 @@ import { resolve } from 'node:path';
 import { buildCatalog, resolveOptions, type BookBridgeOptions, type ResolvedBookBridgeOptions } from './catalog.js';
 
 export type { Book, BookCatalog, BookOverride, BookSourceName, GoodreadsBook } from './schema.js';
-export type { BookBridgeOptions, GoogleBooksSourceOptions, GoodreadsBridgeOptions, MetadataSourceOptions } from './catalog.js';
+export type { BookBridgeOptions, CoverOptions, GoogleBooksSourceOptions, GoodreadsBridgeOptions, MetadataSourceOptions } from './catalog.js';
 export { buildCatalog } from './catalog.js';
 export { parseGoodreadsRss } from './rss.js';
+export { assertValidIsbn, isValidIsbn, isValidIsbn10, isValidIsbn13, normalizeIsbn } from './identifiers.js';
 
 export const virtualModuleId = 'astro-book-bridge:catalog';
 const resolvedVirtualModuleId = `\0${virtualModuleId}`;

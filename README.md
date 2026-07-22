@@ -24,6 +24,9 @@ export default defineConfig({
       openLibrary: true,
       googleBooks: { apiKey: process.env.GOOGLE_BOOKS_API_KEY },
       overrides: 'src/content/book-overrides.json',
+      markdownOverrides: 'src/content/book-overrides',
+      cache: '.astro/book-bridge',
+      covers: { mode: 'local', directory: 'public/book-covers' },
       output: 'src/generated/books.json', // optional
     }),
   ],
@@ -112,38 +115,98 @@ book. Local fields only replace remote fields when they are present.
 ```
 
 Duplicate Goodreads IDs, ISBNs or ISBN13 values are rejected with a build
-error. ISBN punctuation is ignored when matching.
+error. ISBN punctuation is ignored when matching, and supplied ISBNs must pass
+their ISBN-10/ISBN-13 checksum.
+
+### Markdown and MDX reviews
+
+For a longer review, add one `.md` or `.mdx` file per book under
+`src/content/book-overrides/`. The YAML frontmatter identifies the book and the
+body becomes `review` automatically.
+
+```md
+---
+isbn13: "9780441478125"
+featured: true
+tags: [science-fiction, classics]
+---
+
+# A returning favorite
+
+My long-form review goes here in Markdown.
+```
+
+JSON and Markdown overrides are merged together. Duplicated identity keys are
+still reported as a build error, which prevents two reviews from silently
+targeting the same book.
 
 ## Operational behaviour
 
 - Configured providers are fetched when the virtual module is built or loaded.
-- The last successful RSS response is cached under `.astro/goodreads-bridge/`.
-- If the RSS source is temporarily unavailable, that cache is used by default
-  with a warning. Set `staleIfError: false` to fail instead.
-- A failed metadata enrichment emits a warning but does not discard results
-  from the other configured sources.
-- Editing the overrides JSON triggers a full reload in development.
-- Set `cache: false` to disable local RSS caching; `timeoutMs` defaults to
-  `10000`.
+- The last successful RSS, Open Library and Google Books responses are cached
+  independently under `.astro/book-bridge/` by default. A changed ISBN list
+  gets a fresh provider cache entry.
+- When a provider is temporarily unavailable, its matching cache is used by
+  default with a warning. Set `staleIfError: false` to fail instead.
+- A failed metadata enrichment never discards data already returned by another
+  configured source.
+- Set `conflicts: 'error'` to stop the build when two providers return
+  different titles for the same Goodreads ID/ISBN. The default is a warning
+  that keeps the first configured source.
+- Editing the JSON overrides file triggers a full reload in development.
+- Set `cache: false` to disable all provider caches; `timeoutMs` defaults to
+  `10000`. A legacy `cache: '.astro/feed.json'` path continues to work.
+
+### Cover policy and attribution
+
+Remote cover URLs are retained by default. Set `covers.mode` to `local` to
+download provider covers into a directory below `public/`, which makes the
+catalog more reliable and avoids depending on a remote image at page load.
+Every book retains `coverSourceUrl` and `coverAttribution` for a visible credit
+or link in your template.
+
+```js
+bookBridge({
+  openLibrary: { isbns: ['9780140328721'] },
+  covers: {
+    mode: 'local',
+    directory: 'public/book-covers',
+    fallbackUrl: '/book-cover-fallback.svg',
+  },
+});
+```
 
 See [PLAN.md](./PLAN.md) for the delivery plan and next milestones.
 
 ## Copy-ready design demo
 
 `examples/demo` is a small Astro app in this repository, built as a collection
-of sections rather than a full site: book gallery, featured note and reading
-list. It deliberately includes no navigation, header or site layout, so users
-can drop the components into their own design system.
+of sections rather than a full site. It deliberately includes no navigation,
+header or site layout, so users can drop the components into their own design
+system.
 
 ```bash
 pnpm install
 pnpm dev:demo
 ```
 
-The reusable entry component is
-`examples/demo/src/components/BookSections.astro`; it accepts the `books` array
-from the virtual module. The example's visual direction is the bright,
-annotation-led **Margin Notes** style. It uses provider cover images directly
-and has a compact mobile layout.
+The three copy-ready directions are all driven by the same `books` array from
+the virtual module:
 
-Use `pnpm build:demo` to build it as a static Astro site.
+- `BookSections.astro` / `/` — bright, annotation-led **Margin Notes**.
+- `EditorialSections.astro` / `/editorial` — calm, long-form reading journal.
+- `DarkShelfSections.astro` / `/dark-shelf` — dark visual shelf with selected
+  book detail.
+
+All three use semantic headings, lists and cover alt text, provide compact
+mobile layouts, and avoid site-level chrome.
+
+Use `pnpm check:demo` for Astro diagnostics and `pnpm build:demo` to build all
+three pages as a static Astro site.
+
+## Quality and releases
+
+The repository uses pnpm and includes CI for type checks, unit tests, package
+build, Astro diagnostics, demo build and `pnpm pack --dry-run`. Add a release
+note with `pnpm changeset`; the release workflow then creates a version PR and,
+after it merges, publishes with the repository's `NPM_TOKEN` secret.

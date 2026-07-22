@@ -23,7 +23,11 @@
     "check": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "dev:demo": "pnpm --dir examples/demo dev",
-    "build:demo": "pnpm --dir examples/demo build"
+    "build:demo": "pnpm --dir examples/demo build",
+    "check:demo": "pnpm --dir examples/demo check",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "keywords": [
     "astro",
@@ -34,6 +38,9 @@
     "books"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "astro": ">=4.0.0"
   },

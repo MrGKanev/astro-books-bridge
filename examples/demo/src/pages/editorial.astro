@@ -1,0 +1,8 @@
+---
+import { books } from 'astro-book-bridge:catalog';
+import EditorialSections from '../components/EditorialSections.astro';
+import '../styles/editorial.css';
+---
+
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><title>Editorial book sections</title></head><body><EditorialSections books={books} /></body></html>

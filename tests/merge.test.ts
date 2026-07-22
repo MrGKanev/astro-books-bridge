@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { combineSourceBooks, mergeBooks } from '../src/merge.js';
 
 const source = [{
@@ -39,5 +39,14 @@ describe('mergeBooks', () => {
       pageCount: 320,
       sources: ['goodreads-rss', 'open-library'],
     })]);
+  });
+
+  it('reports conflicting titles for the same identifier', () => {
+    const conflict = vi.fn();
+    combineSourceBooks([
+      { source: 'open-library', title: 'First title', isbn13: '9780140328721' },
+      { source: 'google-books', title: 'Different title', isbn13: '9780140328721' },
+    ], conflict);
+    expect(conflict).toHaveBeenCalledWith(expect.stringContaining('Conflicting titles'));
   });
 });

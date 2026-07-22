@@ -27,23 +27,42 @@ describe('buildCatalog', () => {
     }, root));
 
     expect(catalog.books[0]).toMatchObject({ title: 'Book', note: 'Local note' });
-    expect(JSON.parse(await readFile(join(root, '.cache/rss.json'), 'utf8'))).toHaveProperty('xml');
+    expect(JSON.parse(await readFile(join(root, '.cache/rss.json'), 'utf8'))).toHaveProperty('data');
   });
 
   it('can build a catalog from Open Library without Goodreads', async () => {
     const root = await mkdtemp(join(tmpdir(), 'goodreads-bridge-'));
     roots.push(root);
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      'ISBN:9780123456789': { title: 'Library only', identifiers: { isbn_13: ['9780123456789'] } },
+      'ISBN:9780140328721': { title: 'Library only', identifiers: { isbn_13: ['9780140328721'] } },
     }))));
 
     const catalog = await buildCatalog(resolveOptions({
-      openLibrary: { isbns: ['9780123456789'], enrich: false },
+      openLibrary: { isbns: ['9780140328721'], enrich: false },
     }, root));
 
     expect(catalog).toMatchObject({
       books: [expect.objectContaining({ title: 'Library only', source: 'open-library' })],
       source: { providers: ['open-library'] },
     });
+  });
+
+  it('uses a provider cache when Open Library is temporarily unavailable', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'goodreads-bridge-'));
+    roots.push(root);
+    const options = resolveOptions({
+      openLibrary: { isbns: ['9780140328721'], enrich: false },
+      cache: '.cache',
+    }, root);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      'ISBN:9780140328721': { title: 'Cached book', identifiers: { isbn_13: ['9780140328721'] } },
+    }))));
+    await buildCatalog(options);
+
+    const warn = vi.fn();
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+    const catalog = await buildCatalog(options, { warn });
+    expect(catalog).toMatchObject({ books: [expect.objectContaining({ title: 'Cached book' })], source: { usedCache: true } });
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Open Library fetch failed; using cached data'));
   });
 });

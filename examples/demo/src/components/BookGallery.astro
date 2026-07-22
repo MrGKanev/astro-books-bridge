@@ -17,13 +17,13 @@ const { books } = Astro.props;
     <span class="book-count">{books.length} books</span>
   </div>
 
-  <div class="book-filters" aria-label="Book categories">
-    <span class="filter is-active">All books</span>
-    <span class="filter">Fiction</span>
-    <span class="filter">Nonfiction</span>
-    <span class="filter">Poetry</span>
-    <span class="filter">Essays</span>
-  </div>
+  <ul class="book-filters" aria-label="Book categories">
+    <li class="filter is-active">All books</li>
+    <li class="filter">Fiction</li>
+    <li class="filter">Nonfiction</li>
+    <li class="filter">Poetry</li>
+    <li class="filter">Essays</li>
+  </ul>
 
   <div class="book-grid">
     {books.map((book, index) => (

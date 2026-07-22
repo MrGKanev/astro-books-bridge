@@ -1,0 +1,45 @@
+---
+import type { Book } from 'astro-book-bridge';
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+const featured = books.find((book) => book.featured || book.review || book.note) ?? books[0];
+const recent = books.filter((book) => book !== featured).slice(0, 6);
+---
+
+<main class="editorial-book-sections">
+  {featured && (
+    <section class="editorial-feature" aria-labelledby="editorial-feature-heading">
+      <div class="editorial-intro">
+        <p class="editorial-kicker">Reading journal</p>
+        <h1 id="editorial-feature-heading">{featured.title}</h1>
+        <p class="editorial-author">{featured.author ?? 'From your library'}</p>
+        <p class="editorial-note">{featured.review ?? featured.note ?? featured.description ?? 'A place for a considered note about the book that is sitting with you.'}</p>
+        <p class="editorial-source">Sources: {featured.sources.join(' · ')}</p>
+      </div>
+      {featured.imageUrl && <img class="editorial-cover" src={featured.imageUrl} alt={`Cover of ${featured.title}`} />}
+    </section>
+  )}
+
+  <section class="editorial-recent" aria-labelledby="editorial-recent-heading">
+    <div class="editorial-section-heading">
+      <p class="editorial-kicker">From the shelf</p>
+      <h2 id="editorial-recent-heading">Recently read</h2>
+    </div>
+    <ol>
+      {recent.map((book) => (
+        <li>
+          {book.imageUrl && <img src={book.imageUrl} alt="" loading="lazy" />}
+          <div>
+            <h3>{book.title}</h3>
+            <p>{book.author ?? 'Unknown author'}</p>
+          </div>
+          <p class="editorial-date">{book.readAt ?? book.publishedDate ?? 'On the shelf'}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+</main>

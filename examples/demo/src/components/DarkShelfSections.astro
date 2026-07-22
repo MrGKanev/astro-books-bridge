@@ -1,0 +1,44 @@
+---
+import type { Book } from 'astro-book-bridge';
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+const selected = books.find((book) => book.featured || book.description) ?? books[0];
+---
+
+<main class="dark-shelf-sections">
+  <section class="dark-library" aria-labelledby="dark-library-heading">
+    <div class="dark-heading">
+      <div>
+        <p>Personal library</p>
+        <h1 id="dark-library-heading">All books</h1>
+      </div>
+      <span>{books.length} books</span>
+    </div>
+    <div class="dark-shelf-grid">
+      {books.map((book) => (
+        <article>
+          {book.imageUrl && <img src={book.imageUrl} alt={`Cover of ${book.title}`} loading="lazy" />}
+          <h2>{book.title}</h2>
+          <p>{book.author ?? 'Unknown author'}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {selected && (
+    <aside class="dark-book-note" aria-labelledby="dark-book-note-heading">
+      {selected.imageUrl && <img src={selected.imageUrl} alt={`Cover of ${selected.title}`} />}
+      <div>
+        <p class="dark-state">Selected book</p>
+        <h2 id="dark-book-note-heading">{selected.title}</h2>
+        <p class="dark-author">{selected.author ?? 'Unknown author'}</p>
+        <p class="dark-description">{selected.note ?? selected.review ?? selected.description ?? 'Add a summary or a note from your own reading here.'}</p>
+        {selected.tags?.length ? <p class="dark-tags">{selected.tags.join(' · ')}</p> : <p class="dark-tags">{selected.sources.join(' · ')}</p>}
+      </div>
+    </aside>
+  )}
+</main>

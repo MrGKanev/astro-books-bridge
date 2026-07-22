@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidIsbn, isValidIsbn13 } from './identifiers.js';
 
 const identifier = z.string().trim().min(1);
 
@@ -16,6 +17,14 @@ export const bookOverrideSchema = z
   })
   .refine((book) => book.goodreadsId || book.isbn || book.isbn13, {
     message: 'Each override needs goodreadsId, isbn, or isbn13.',
+  })
+  .refine((book) => !book.isbn || isValidIsbn(book.isbn), {
+    message: 'isbn must be a valid ISBN-10 or ISBN-13.',
+    path: ['isbn'],
+  })
+  .refine((book) => !book.isbn13 || isValidIsbn13(book.isbn13), {
+    message: 'isbn13 must be a valid ISBN-13.',
+    path: ['isbn13'],
   });
 
 export const bookOverridesSchema = z.object({
@@ -48,6 +57,14 @@ export interface GoodreadsBook {
   subjects?: string[];
   language?: string;
   previewLink?: string;
+  /** Original provider URL for a remote cover, retained when a local cover cache is used. */
+  coverSourceUrl?: string;
+  /** Provider that supplied the active cover; may differ from the book's primary metadata source. */
+  coverProvider?: BookSourceName;
+  coverAttribution?: {
+    provider: BookSourceName;
+    url: string;
+  };
 }
 
 export type Book = GoodreadsBook &

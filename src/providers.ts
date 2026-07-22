@@ -1,4 +1,5 @@
 import type { GoodreadsBook } from './schema.js';
+import { normalizeIsbn } from './identifiers.js';
 
 function text(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
@@ -10,10 +11,6 @@ function stringList(value: unknown): string[] | undefined {
 
 function objectList(value: unknown): Record<string, unknown>[] | undefined {
   return Array.isArray(value) ? value.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object') : undefined;
-}
-
-function isbn(value: string): string {
-  return value.replace(/[^0-9Xx]/g, '').toUpperCase();
 }
 
 export async function fetchJson(url: string, timeoutMs: number): Promise<unknown> {
@@ -29,7 +26,7 @@ export async function fetchJson(url: string, timeoutMs: number): Promise<unknown
 }
 
 export async function fetchOpenLibraryBooks(isbns: string[], timeoutMs: number): Promise<GoodreadsBook[]> {
-  const identifiers = [...new Set(isbns.map(isbn).filter(Boolean))];
+  const identifiers = [...new Set(isbns.map(normalizeIsbn).filter(Boolean))];
   if (identifiers.length === 0) return [];
   const url = new URL('https://openlibrary.org/api/books');
   url.searchParams.set('bibkeys', identifiers.map((value) => `ISBN:${value}`).join(','));
@@ -52,6 +49,8 @@ export async function fetchOpenLibraryBooks(isbns: string[], timeoutMs: number):
       isbn13: stringList(identifiers?.isbn_13)?.[0],
       link: text(data.url),
       imageUrl: text(cover?.large) ?? text(cover?.medium) ?? text(cover?.small),
+      coverSourceUrl: text(cover?.large) ?? text(cover?.medium) ?? text(cover?.small),
+      coverProvider: text(cover?.large) ?? text(cover?.medium) ?? text(cover?.small) ? 'open-library' : undefined,
       description: text(data.description),
       publisher: objectList(data.publishers)?.map((publisher) => text(publisher.name)).filter(Boolean).join(', ') || undefined,
       publishedDate: text(data.publish_date),
@@ -63,7 +62,7 @@ export async function fetchOpenLibraryBooks(isbns: string[], timeoutMs: number):
 }
 
 export async function fetchGoogleBooks(isbns: string[], timeoutMs: number, apiKey?: string): Promise<GoodreadsBook[]> {
-  const books = await Promise.all([...new Set(isbns.map(isbn).filter(Boolean))].map(async (value) => {
+  const books = await Promise.all([...new Set(isbns.map(normalizeIsbn).filter(Boolean))].map(async (value) => {
     const url = new URL('https://www.googleapis.com/books/v1/volumes');
     url.searchParams.set('q', `isbn:${value}`);
     if (apiKey) url.searchParams.set('key', apiKey);
@@ -83,6 +82,8 @@ export async function fetchGoogleBooks(isbns: string[], timeoutMs: number, apiKe
       link: text(info?.infoLink),
       previewLink: text(info?.previewLink),
       imageUrl: text(cover?.thumbnail)?.replace(/^http:/, 'https:'),
+      coverSourceUrl: text(cover?.thumbnail)?.replace(/^http:/, 'https:'),
+      coverProvider: text(cover?.thumbnail) ? 'google-books' : undefined,
       description: text(info?.description),
       averageRating: typeof info?.averageRating === 'number' ? info.averageRating : undefined,
       publisher: text(info?.publisher),
