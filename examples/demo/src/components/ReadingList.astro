@@ -1,0 +1,31 @@
+---
+import type { Book } from 'astro-book-bridge';
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+---
+
+<section class="reading-list" aria-labelledby="reading-list-heading">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Keep nearby</p>
+      <h2 id="reading-list-heading">Reading list</h2>
+    </div>
+    <span class="book-count">{books.length} saved</span>
+  </div>
+  <ol>
+    {books.map((book) => (
+      <li>
+        {book.imageUrl && <img src={book.imageUrl} alt="" loading="lazy" />}
+        <div>
+          <h3>{book.title}</h3>
+          <p>{book.author ?? 'Unknown author'}</p>
+        </div>
+        <span class="save-mark">Saved</span>
+      </li>
+    ))}
+  </ol>
+</section>

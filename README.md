@@ -8,7 +8,7 @@ project.
 ## Installation
 
 ```bash
-npm install astro-book-bridge
+pnpm add astro-book-bridge
 ```
 
 Register the integration in `astro.config.mjs`:
@@ -127,3 +127,23 @@ error. ISBN punctuation is ignored when matching.
   `10000`.
 
 See [PLAN.md](./PLAN.md) for the delivery plan and next milestones.
+
+## Copy-ready design demo
+
+`examples/demo` is a small Astro app in this repository, built as a collection
+of sections rather than a full site: book gallery, featured note and reading
+list. It deliberately includes no navigation, header or site layout, so users
+can drop the components into their own design system.
+
+```bash
+pnpm install
+pnpm dev:demo
+```
+
+The reusable entry component is
+`examples/demo/src/components/BookSections.astro`; it accepts the `books` array
+from the virtual module. The example's visual direction is the bright,
+annotation-led **Margin Notes** style. It uses provider cover images directly
+and has a compact mobile layout.
+
+Use `pnpm build:demo` to build it as a static Astro site.

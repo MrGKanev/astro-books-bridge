@@ -1,0 +1,22 @@
+---
+import type { Book } from 'astro-book-bridge';
+import BookGallery from './BookGallery.astro';
+import FeaturedNote from './FeaturedNote.astro';
+import ReadingList from './ReadingList.astro';
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+const featured = books.find((book) => book.featured || book.note || book.review) ?? books[0];
+const readingList = books.filter((book) => book.recommended).slice(0, 4);
+---
+
+<main class="book-sections">
+  <BookGallery books={books} />
+  <div class="book-secondary-grid">
+    <FeaturedNote book={featured} />
+    <ReadingList books={readingList.length ? readingList : books.slice(1, 5)} />
+  </div>
+</main>

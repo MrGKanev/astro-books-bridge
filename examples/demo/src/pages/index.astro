@@ -1,0 +1,18 @@
+---
+import { books } from 'astro-book-bridge:catalog';
+import BookSections from '../components/BookSections.astro';
+import '../styles/demo.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="A copy-ready book catalog section for Astro." />
+    <title>Book sections demo</title>
+  </head>
+  <body>
+    <BookSections books={books} />
+  </body>
+</html>

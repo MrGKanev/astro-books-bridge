@@ -1,0 +1,44 @@
+---
+import type { Book } from 'astro-book-bridge';
+
+interface Props {
+  books: Book[];
+}
+
+const { books } = Astro.props;
+---
+
+<section class="book-gallery" aria-labelledby="library-heading">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Your catalog</p>
+      <h2 id="library-heading">Books worth passing on</h2>
+    </div>
+    <span class="book-count">{books.length} books</span>
+  </div>
+
+  <div class="book-filters" aria-label="Book categories">
+    <span class="filter is-active">All books</span>
+    <span class="filter">Fiction</span>
+    <span class="filter">Nonfiction</span>
+    <span class="filter">Poetry</span>
+    <span class="filter">Essays</span>
+  </div>
+
+  <div class="book-grid">
+    {books.map((book, index) => (
+      <article class:list={['book-card', { 'book-card--offset': index % 5 === 1 || index % 5 === 4 }]}>
+        {book.imageUrl ? (
+          <img class="book-cover" src={book.imageUrl} alt={`Cover of ${book.title}`} loading="lazy" />
+        ) : (
+          <p class="book-no-cover">Cover unavailable</p>
+        )}
+        <div class="book-copy">
+          <h3>{book.title}</h3>
+          {book.author && <p>{book.author}</p>}
+          {book.note && <p class="book-note">{book.note}</p>}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,24 @@
+---
+import type { Book } from 'astro-book-bridge';
+
+interface Props {
+  book?: Book;
+}
+
+const { book } = Astro.props;
+---
+
+{book && (
+  <section class="featured-note" aria-labelledby="featured-heading">
+    <div class="featured-label">Featured note</div>
+    <div class="featured-content">
+      {book.imageUrl && <img src={book.imageUrl} alt={`Cover of ${book.title}`} loading="lazy" />}
+      <div>
+        <p class="eyebrow">{book.author ?? 'From your shelf'}</p>
+        <h2 id="featured-heading">{book.title}</h2>
+        <p class="featured-copy">{book.review ?? book.note ?? book.description ?? 'Leave a small note here: the line, idea, or feeling that made this book stay with you.'}</p>
+        {book.tags?.length ? <p class="tag-list">{book.tags.join(' · ')}</p> : <p class="tag-list">Personal pick · {book.sources.join(' + ')}</p>}
+      </div>
+    </div>
+  </section>
+)}
