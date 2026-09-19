@@ -28,9 +28,8 @@ export async function fetchJson(url: string, timeoutMs: number): Promise<unknown
 export async function fetchOpenLibraryBooks(isbns: string[], timeoutMs: number): Promise<GoodreadsBook[]> {
   const identifiers = [...new Set(isbns.map(normalizeIsbn).filter(Boolean))];
   if (identifiers.length === 0) return [];
-  const url = new URL('https://openlibrary.org/api/books');
+  const url = new URL('https://openlibrary.org/api/books.json');
   url.searchParams.set('bibkeys', identifiers.map((value) => `ISBN:${value}`).join(','));
-  url.searchParams.set('format', 'json');
   url.searchParams.set('jscmd', 'data');
   const response = await fetchJson(url.toString(), timeoutMs) as Record<string, unknown>;
 
