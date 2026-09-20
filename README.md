@@ -165,6 +165,11 @@ catalog more reliable and avoids depending on a remote image at page load.
 Every book retains `coverSourceUrl` and `coverAttribution` for a visible credit
 or link in your template.
 
+Covers are cached under a hash of their source URL. In local mode, every build
+also removes cached cover files that no longer belong to any book in the
+catalog (a book fell off the shelf, or its cover URL changed) so `public/`
+doesn't accumulate stale images. Set `covers.prune` to `false` to keep them.
+
 ```js
 bookBridge({
   openLibrary: { isbns: ['9780140328721'] },
@@ -172,6 +177,7 @@ bookBridge({
     mode: 'local',
     directory: 'public/book-covers',
     fallbackUrl: '/book-cover-fallback.svg',
+    prune: true, // default; set false to keep orphaned covers
   },
 });
 ```

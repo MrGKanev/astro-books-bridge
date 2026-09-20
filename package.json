@@ -1,6 +1,6 @@
 {
   "name": "astro-book-bridge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "packageManager": "pnpm@12.4.2",
   "description": "Build a typed, locally enriched Astro book catalog from Goodreads RSS, Open Library and Google Books.",
   "type": "module",

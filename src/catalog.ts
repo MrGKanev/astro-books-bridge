@@ -27,6 +27,8 @@ export interface CoverOptions {
   directory?: string;
   /** Image URL used when a provider has no cover or a download fails. */
   fallbackUrl?: string;
+  /** In local mode, delete cached cover files no longer referenced by any book. Defaults to true. */
+  prune?: boolean;
 }
 
 export interface BookBridgeOptions {
@@ -111,6 +113,7 @@ export function resolveOptions(options: BookBridgeOptions, root: string): Resolv
       mode: options.covers?.mode ?? 'remote',
       directory: options.covers?.directory ?? 'public/book-covers',
       fallbackUrl: options.covers?.fallbackUrl,
+      prune: options.covers?.prune ?? true,
     },
     output: options.output,
     timeoutMs: options.timeoutMs ?? 10_000,
